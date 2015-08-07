@@ -16,7 +16,7 @@ public class BookTest1 {
             order.setSide(Side.Buy);
             order.setSymbol("IBM");
             order.setTimeStamp(System.nanoTime());
-            order.setOrderType(OrderType.Market);
+            order.setOrderType(OrderType.Limit);
 
             book.addOrder(order);
 

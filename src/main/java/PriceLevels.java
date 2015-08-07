@@ -1,9 +1,11 @@
+import org.apache.commons.collections4.list.TreeList;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 
 public class PriceLevels {
 
-    LinkedList<PriceLevel> list = new LinkedList<>();
+    TreeList<PriceLevel> list = new TreeList<>();
 
     PriceLevel mktLevel = new PriceLevel();
 
