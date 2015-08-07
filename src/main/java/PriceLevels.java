@@ -5,13 +5,13 @@ public class PriceLevels {
 
     LinkedList<PriceLevel> list = new LinkedList<>();
 
-    public void addOrder(Order order)
+    public synchronized void addOrder(Order order)
     {
         PriceLevel priceLevel = getPriceLevel(order.getPrice());
         priceLevel.addOrder(order);
     }
 
-    public void deleteOrder(Order order)
+    public synchronized void deleteOrder(Order order)
     {
         PriceLevel priceLevel = getPriceLevel(order.getPrice());
         priceLevel.deleteOrder(order);
