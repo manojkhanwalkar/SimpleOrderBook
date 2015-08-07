@@ -1,9 +1,14 @@
-
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class OrderBook {
 
     PriceLevels buy = new PriceLevels();
     PriceLevels sell = new PriceLevels();
+
+    ConcurrentMap<String,Order> orders = new ConcurrentHashMap<>();
 
     String symbol ;
 
@@ -17,6 +22,7 @@ public class OrderBook {
 
     public void addOrder(Order order)
     {
+        orders.put(order.getOrderId(),order);
         switch (order.getSide())
         {
             case Buy :
@@ -30,9 +36,14 @@ public class OrderBook {
 
     }
 
-    public void deleteOrder(Order order)
+    public void deleteOrder(String  orderId)
     {
-        switch (order.getSide())
+        // lazy delete - will be removed while popping orders for execution .
+        Order order = orders.get(orderId);
+        if (order!=null)
+            order.setDeleted(true);
+
+ /*       switch (order.getSide())
         {
             case Buy :
                 buy.deleteOrder(order);
@@ -41,7 +52,7 @@ public class OrderBook {
                 sell.deleteOrder(order);
                 break ;
 
-        }
+        }*/
 
     }
 

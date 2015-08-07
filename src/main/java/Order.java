@@ -7,6 +7,12 @@ public class Order {
     int quantity;
     long timeStamp ;
 
+    boolean deleted = false ;
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     public String getOrderId() {
         return orderId;
     }

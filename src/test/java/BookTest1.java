@@ -26,13 +26,7 @@ public class BookTest1 {
         for (int i=0;i<100;i++)
         {
 
-            Order order = new Order();
-            order.setPrice(100 - i);
-            order.setOrderId("O1" + i) ;
-            order.setSymbol("IBM");
-            order.setSide(Side.Buy);
-
-            book.deleteOrder(order);
+            book.deleteOrder("O1" + i);
 
         }
 
