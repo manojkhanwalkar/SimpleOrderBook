@@ -12,7 +12,7 @@ static class Holder
 
     private OrderBookManager() {}
 
-    public OrderBookManager getInstance()
+    public static OrderBookManager getInstance()
     {
         return Holder.manager;
     }
@@ -22,7 +22,10 @@ static class Holder
     public OrderBook createOrderBook(String symbol)
     {
 
-        OrderBook book = books.putIfAbsent(symbol,new OrderBook());
+
+        OrderBook book = new OrderBook();
+
+        books.put(symbol,new OrderBook());
         return book ;
 
     }

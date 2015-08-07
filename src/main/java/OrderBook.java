@@ -5,7 +5,15 @@ public class OrderBook {
     PriceLevels buy = new PriceLevels();
     PriceLevels sell = new PriceLevels();
 
+    String symbol ;
 
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
 
     public void addOrder(Order order)
     {
