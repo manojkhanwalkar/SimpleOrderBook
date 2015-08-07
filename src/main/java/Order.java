@@ -6,6 +6,7 @@ public class Order {
     double price ;
     int quantity;
     long timeStamp ;
+    OrderType orderType;
 
     boolean deleted = false ;
 
@@ -59,6 +60,14 @@ public class Order {
 
     public void setTimeStamp(long timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    public OrderType getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(OrderType orderType) {
+        this.orderType = orderType;
     }
 
     @Override

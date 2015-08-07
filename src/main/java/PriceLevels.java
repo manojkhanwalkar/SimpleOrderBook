@@ -5,16 +5,30 @@ public class PriceLevels {
 
     LinkedList<PriceLevel> list = new LinkedList<>();
 
+    PriceLevel mktLevel = new PriceLevel();
+
     public synchronized void addOrder(Order order)
     {
-        PriceLevel priceLevel = getPriceLevel(order.getPrice());
-        priceLevel.addOrder(order);
+        if (order.getOrderType()==OrderType.Market)
+        {
+            mktLevel.addOrder(order);
+        }
+        else {
+            PriceLevel priceLevel = getPriceLevel(order.getPrice());
+            priceLevel.addOrder(order);
+        }
     }
 
     public synchronized void deleteOrder(Order order)
     {
-        PriceLevel priceLevel = getPriceLevel(order.getPrice());
-        priceLevel.deleteOrder(order);
+        if (order.getOrderType()==OrderType.Market)
+        {
+            mktLevel.deleteOrder(order);
+        }
+        else {
+            PriceLevel priceLevel = getPriceLevel(order.getPrice());
+            priceLevel.deleteOrder(order);
+        }
     }
 
     private PriceLevel getPriceLevel(double price)
@@ -64,6 +78,7 @@ public class PriceLevels {
     public String toString() {
         return "PriceLevels{" +
                 "list=" + list +
+                ", mktLevel=" + mktLevel +
                 '}';
     }
 }
