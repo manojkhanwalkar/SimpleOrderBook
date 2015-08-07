@@ -54,4 +54,21 @@ public class Order {
     public void setTimeStamp(long timeStamp) {
         this.timeStamp = timeStamp;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Order order = (Order) o;
+
+        if (!orderId.equals(order.orderId)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return orderId.hashCode();
+    }
 }
