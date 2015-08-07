@@ -30,18 +30,29 @@ public class OrderBook {
 
     }
 
-    public void deleteOrder(String orderId)
+    public void deleteOrder(Order order)
     {
+        switch (order.getSide())
+        {
+            case Buy :
+                buy.deleteOrder(order);
+                break ;
+            case Sell :
+                sell.deleteOrder(order);
+                break ;
+
+        }
 
     }
 
-    public void modifyOrder(Order order)
-    {
-
+    @Override
+    public String toString() {
+        return "OrderBook{" +
+                "buy=" + buy +
+                ", sell=" + sell +
+                ", symbol='" + symbol + '\'' +
+                '}';
     }
-
-
-
 }
 
 

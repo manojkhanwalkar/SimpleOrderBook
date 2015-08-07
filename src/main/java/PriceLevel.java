@@ -25,7 +25,11 @@ public class PriceLevel {
         orders.remove(order);
     }
 
-
-
-
+    @Override
+    public String toString() {
+        return "PriceLevel{" +
+                "price=" + price +
+                ", orders=" + orders +
+                '}';
+    }
 }

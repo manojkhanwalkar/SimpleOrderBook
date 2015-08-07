@@ -25,9 +25,14 @@ static class Holder
 
         OrderBook book = new OrderBook();
 
-        books.put(symbol,new OrderBook());
+        books.put(symbol,book);
         return book ;
 
+    }
+
+    public void print()
+    {
+        System.out.println(books);
     }
 
 }

@@ -11,6 +11,11 @@ public class PriceLevels {
         priceLevel.addOrder(order);
     }
 
+    public void deleteOrder(Order order)
+    {
+        PriceLevel priceLevel = getPriceLevel(order.getPrice());
+        priceLevel.deleteOrder(order);
+    }
 
     private PriceLevel getPriceLevel(double price)
     {
@@ -55,5 +60,10 @@ public class PriceLevels {
         return level ;
     }
 
-
+    @Override
+    public String toString() {
+        return "PriceLevels{" +
+                "list=" + list +
+                '}';
+    }
 }

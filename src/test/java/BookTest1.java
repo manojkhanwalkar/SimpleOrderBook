@@ -4,6 +4,7 @@ public class BookTest1 {
         OrderBookManager manager = OrderBookManager.getInstance();
 
         OrderBook book = manager.createOrderBook("IBM");
+        book.setSymbol("IBM");
 
         for (int i=0;i<100;i++)
         {
@@ -19,6 +20,23 @@ public class BookTest1 {
             book.addOrder(order);
 
         }
+
+        manager.print();
+
+        for (int i=0;i<100;i++)
+        {
+
+            Order order = new Order();
+            order.setPrice(100 - i);
+            order.setOrderId("O1" + i) ;
+            order.setSymbol("IBM");
+            order.setSide(Side.Buy);
+
+            book.deleteOrder(order);
+
+        }
+
+        manager.print();
 
 
     }

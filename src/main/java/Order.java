@@ -71,4 +71,16 @@ public class Order {
     public int hashCode() {
         return orderId.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "orderId='" + orderId + '\'' +
+                ", symbol='" + symbol + '\'' +
+                ", side=" + side +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                ", timeStamp=" + timeStamp +
+                '}';
+    }
 }
