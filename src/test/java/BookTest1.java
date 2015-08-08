@@ -6,14 +6,14 @@ public class BookTest1 {
         OrderBook book = manager.createOrderBook("IBM");
         book.setSymbol("IBM");
 
-        for (int i=0;i<1000;i++)
+        for (int i=0;i<5;i++)
         {
 
             Order order = new Order();
             order.setPrice(1000-i);
             order.setOrderId("O1" + i) ;
             order.setQuantity(10);
-            order.setSide(Side.Buy);
+            order.setSide(Side.Sell);
             order.setSymbol("IBM");
             order.setTimeStamp(System.nanoTime());
             order.setOrderType(OrderType.Limit);
@@ -32,8 +32,8 @@ public class BookTest1 {
 
         Manning manning = new Manning();
         manning.setQuantity(20000);
-        manning.setSide(Side.Sell);
-        manning.setPrice(1);
+        manning.setSide(Side.Buy);
+        manning.setPrice(1000);
         book.processManning(manning);
 
         manager.print();

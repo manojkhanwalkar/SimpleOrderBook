@@ -94,7 +94,7 @@ public class OrderBook {
     }
 
 
-    public void processManning(Manning manning)
+    public synchronized void processManning(Manning manning)
     {
         if (manning.getSide()==Side.Buy)
         {
