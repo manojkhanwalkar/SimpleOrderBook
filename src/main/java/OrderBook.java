@@ -42,6 +42,9 @@ public class OrderBook {
     3. Once orders are complete in the mkt , then look at orders in the limit - in decreasing price levels (for buy ) and increasing price levels (for sell )
     4. For limit Buy - manning price has to be lower . Stop if the buy limit price is lower the manning price
     5. For limit sell , stop when sell price is higher than the manning price .
+    6. If price level is empty , delete the price level .
+    7. While popping the order check if it has been deleted .
+    8. stop if the manning qty is exhausted or if the manning price is above / below the buy / sell price .
 
      */
 
