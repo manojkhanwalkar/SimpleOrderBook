@@ -36,6 +36,20 @@ public class OrderBook {
 
     }
 
+    /*
+    1. Process orders opposite to the Manning event
+    2. First check the mkt order list and pop orders off in qty .  An order may be partially executed - so pop an order only if fully executed or just adjust the quantity .
+    3. Once orders are complete in the mkt , then look at orders in the limit - in decreasing price levels (for buy ) and increasing price levels (for sell )
+    4. For limit Buy - manning price has to be lower . Stop if the buy limit price is lower the manning price
+    5. For limit sell , stop when sell price is higher than the manning price .
+
+     */
+
+    public void processManning(Manning manning)
+    {
+
+    }
+
     public void deleteOrder(String  orderId)
     {
         // lazy delete - will be removed while popping orders for execution .
