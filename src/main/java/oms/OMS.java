@@ -1,6 +1,7 @@
 package oms;
 
 import cache.Cache;
+import fix.FixMessage;
 import model.Detail;
 import model.Execution;
 import model.Order;
@@ -27,6 +28,11 @@ public class OMS {
     }
 
     private OMS()
+    {
+
+    }
+
+    public void process(FixMessage message)
     {
 
     }
