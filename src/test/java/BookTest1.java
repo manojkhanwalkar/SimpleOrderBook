@@ -6,13 +6,13 @@ public class BookTest1 {
         OrderBook book = manager.createOrderBook("IBM");
         book.setSymbol("IBM");
 
-        for (int i=0;i<100;i++)
+        for (int i=0;i<1000;i++)
         {
 
             Order order = new Order();
-            order.setPrice(100-i);
+            order.setPrice(1000-i);
             order.setOrderId("O1" + i) ;
-            order.setQuantity(10000+i);
+            order.setQuantity(10);
             order.setSide(Side.Buy);
             order.setSymbol("IBM");
             order.setTimeStamp(System.nanoTime());
@@ -22,14 +22,19 @@ public class BookTest1 {
 
         }
 
-        manager.print();
 
-        for (int i=0;i<100;i++)
+  /*      for (int i=0;i<2;i++)
         {
 
             book.deleteOrder("O1" + i);
 
-        }
+        }*/
+
+        Manning manning = new Manning();
+        manning.setQuantity(20000);
+        manning.setSide(Side.Sell);
+        manning.setPrice(1);
+        book.processManning(manning);
 
         manager.print();
 

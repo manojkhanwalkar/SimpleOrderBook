@@ -1,4 +1,5 @@
 import java.util.HashSet;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,28 +53,41 @@ public class OrderBook {
     private void applyManningToSell(Manning manning)
     {
         int remainingQty = manning.getQuantity();
-
         Queue<Order> orders = sell.mktLevel.orders;
-        while (!orders.isEmpty())
-        {
-            Order order = orders.peek();
-            if (order.isDeleted())
-            {
-                orders.remove();
-                continue;
-            }
-            if (order.getQuantity()<=remainingQty)
-            {
-                orders.remove();
-                remainingQty-=order.getQuantity();
-            }
-            else
-            {
+        processMktOrders(manning,orders);
 
-                order.setQuantity(order.getQuantity()-remainingQty);
-                remainingQty = 0;
+        List<PriceLevel> ordersList = sell.list;
+        for (int i=0;i<ordersList.size();i++)
+        {
+            PriceLevel priceLevel = ordersList.get(i);
+            if (priceLevel.getPrice()>manning.getPrice())
                 return ;
+             orders = priceLevel.orders;
+            while (!orders.isEmpty())
+            {
+                Order order = orders.peek();
+                if (order.isDeleted())
+                {
+                    orders.remove();
+                    continue;
+                }
+                if (order.getQuantity()<=remainingQty)
+                {
+                    orders.remove();
+                    remainingQty-=order.getQuantity();
+                }
+                else
+                {
+
+                    order.setQuantity(order.getQuantity()-remainingQty);
+                    remainingQty = 0;
+                    return ;
+                }
             }
+            // queue is empty if control comes here , so delete it
+            ordersList.remove(i--);
+
+
         }
 
 
@@ -94,8 +108,86 @@ public class OrderBook {
 
     }
 
-    private void applyManningToBuy(Manning manning) {
+    private void processMktOrders(Manning manning , Queue<Order> orders)
+    {
+        int remainingQty = manning.getQuantity();
+        { // process mkt queue
+            while (!orders.isEmpty()) {
+                Order order = orders.peek();
+                if (order.isDeleted()) {
+                    orders.remove();
+                    continue;
+                }
+                if (order.getQuantity() <= remainingQty) {
+                    orders.remove();
+                    remainingQty -= order.getQuantity();
+                } else {
+
+                    order.setQuantity(order.getQuantity() - remainingQty);
+                    remainingQty = 0;
+
+                    return;
+                }
+            }
+        }
+
     }
+
+   /* private boolean shouldProcess(double price1 , double price2)
+    {
+        if (price1>price2)
+            return true ;
+        else
+            return false ;
+    }*/
+
+    private void applyManningToBuy(Manning manning)
+    {
+        int remainingQty = manning.getQuantity();
+        Queue<Order> orders = buy.mktLevel.orders;
+        processMktOrders(manning,orders);
+
+
+        List<PriceLevel> ordersList = buy.list;
+
+        for (int i=ordersList.size()-1;i>=0;i--)
+        {
+            PriceLevel priceLevel = ordersList.get(i);
+            if (priceLevel.getPrice()<manning.getPrice())
+                return ;
+             orders = priceLevel.orders;
+            while (!orders.isEmpty())
+            {
+                Order order = orders.peek();
+                if (order.isDeleted())
+                {
+                    orders.remove();
+                    continue;
+                }
+                if (order.getQuantity()<=remainingQty)
+                {
+                    orders.remove();
+                    remainingQty-=order.getQuantity();
+                }
+                else
+                {
+
+                    order.setQuantity(order.getQuantity()-remainingQty);
+                    remainingQty = 0;
+                    return ;
+                }
+            }
+            // queue is empty if control comes here , so delete it
+            ordersList.remove(i);
+
+            //i++; // adjust i as list size decreases .
+
+
+        }
+
+
+    }
+
 
 
 
