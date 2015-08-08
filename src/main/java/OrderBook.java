@@ -1,4 +1,5 @@
 import java.util.HashSet;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -22,7 +23,7 @@ public class OrderBook {
 
     public void addOrder(Order order)
     {
-        orders.put(order.getOrderId(),order);
+        orders.put(order.getOrderId(), order);
         switch (order.getSide())
         {
             case Buy :
@@ -48,10 +49,57 @@ public class OrderBook {
 
      */
 
-    public void processManning(Manning manning)
+    private void applyManningToSell(Manning manning)
     {
+        int remainingQty = manning.getQuantity();
+
+        Queue<Order> orders = sell.mktLevel.orders;
+        while (!orders.isEmpty())
+        {
+            Order order = orders.peek();
+            if (order.isDeleted())
+            {
+                orders.remove();
+                continue;
+            }
+            if (order.getQuantity()<=remainingQty)
+            {
+                orders.remove();
+                remainingQty-=order.getQuantity();
+            }
+            else
+            {
+
+                order.setQuantity(order.getQuantity()-remainingQty);
+                remainingQty = 0;
+                return ;
+            }
+        }
+
 
     }
+
+
+    public void processManning(Manning manning)
+    {
+        if (manning.getSide()==Side.Buy)
+        {
+            applyManningToSell(manning);
+        }
+        else
+        {
+            applyManningToBuy(manning);
+
+        }
+
+    }
+
+    private void applyManningToBuy(Manning manning) {
+    }
+
+
+
+
 
     public void deleteOrder(String  orderId)
     {

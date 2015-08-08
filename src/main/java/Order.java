@@ -14,6 +14,10 @@ public class Order {
         this.deleted = deleted;
     }
 
+    public boolean isDeleted() {
+        return deleted;
+    }
+
     public String getOrderId() {
         return orderId;
     }
