@@ -1,5 +1,10 @@
 package oms;
 
+import model.Execution;
+import model.Order;
+import model.OrderList;
+import model.Transaction;
+
 public class OMSFactory {
 
     static class Holder {
@@ -15,5 +20,30 @@ public class OMSFactory {
     {
 
     }
+
+    public Order createOrder()
+    {
+        return new Order();
+
+    }
+
+    public Execution createExecution()
+    {
+        return new Execution();
+
+    }
+
+    public Transaction createTransaction()
+    {
+        return new Transaction();
+
+    }
+
+    public OrderList createList()
+    {
+        return new OrderList();
+
+    }
+
 
 }
