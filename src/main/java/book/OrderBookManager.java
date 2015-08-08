@@ -1,6 +1,6 @@
-import java.util.Map;
+package book;
+
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 
 public class OrderBookManager {
@@ -17,7 +17,7 @@ static class Holder
         return Holder.manager;
     }
 
-    ConcurrentMap<String,OrderBook> books = new ConcurrentHashMap<>();
+    ConcurrentMap<String, OrderBook> books = new ConcurrentHashMap<>();
 
     public OrderBook createOrderBook(String symbol)
     {
@@ -25,7 +25,7 @@ static class Holder
 
         OrderBook book = new OrderBook();
 
-        books.put(symbol,book);
+        books.put(symbol, book);
         return book ;
 
     }

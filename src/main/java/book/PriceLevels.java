@@ -1,7 +1,9 @@
-import org.apache.commons.collections4.list.TreeList;
+package book;
 
-import java.util.Iterator;
-import java.util.LinkedList;
+import book.PriceLevel;
+import model.Order;
+import model.OrderType;
+import org.apache.commons.collections4.list.TreeList;
 
 public class PriceLevels {
 
@@ -11,7 +13,7 @@ public class PriceLevels {
 
     public synchronized void addOrder(Order order)
     {
-        if (order.getOrderType()==OrderType.Market)
+        if (order.getOrderType()== OrderType.Market)
         {
             mktLevel.addOrder(order);
         }

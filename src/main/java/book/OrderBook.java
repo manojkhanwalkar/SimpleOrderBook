@@ -1,7 +1,13 @@
-import java.util.HashSet;
+package book;
+
+import model.Manning;
+import model.Order;
+import book.PriceLevel;
+import book.PriceLevels;
+import model.Side;
+
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -10,7 +16,7 @@ public class OrderBook {
     PriceLevels buy = new PriceLevels();
     PriceLevels sell = new PriceLevels();
 
-    ConcurrentMap<String,Order> orders = new ConcurrentHashMap<>();
+    ConcurrentMap<String, Order> orders = new ConcurrentHashMap<>();
 
     String symbol ;
 
@@ -39,7 +45,7 @@ public class OrderBook {
     }
 
     /*
-    1. Process orders opposite to the Manning event
+    1. Process orders opposite to the model.Manning event
     2. First check the mkt order list and pop orders off in qty .  An order may be partially executed - so pop an order only if fully executed or just adjust the quantity .
     3. Once orders are complete in the mkt , then look at orders in the limit - in decreasing price levels (for buy ) and increasing price levels (for sell )
     4. For limit Buy - manning price has to be lower . Stop if the buy limit price is lower the manning price
@@ -96,7 +102,7 @@ public class OrderBook {
 
     public synchronized void processManning(Manning manning)
     {
-        if (manning.getSide()==Side.Buy)
+        if (manning.getSide()== Side.Buy)
         {
             applyManningToSell(manning);
         }
