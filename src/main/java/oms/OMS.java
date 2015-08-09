@@ -77,6 +77,17 @@ public class OMS {
 
     }
 
+
+    //TODO
+    /*
+    1. Add List , add orders to list
+    2. Create Execution
+    3. Create Order
+    4. Split List
+    5. Aggregate List
+
+     */
+
     public void process(FixMessage message) throws Exception
     {
         String tag = message.get(MsgType);

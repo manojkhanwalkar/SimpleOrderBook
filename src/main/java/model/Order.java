@@ -2,6 +2,7 @@ package model;
 
 public class Order {
 
+    String listId;
     String orderId;
     String symbol ;
     Side side;
@@ -103,5 +104,13 @@ public class Order {
                 ", quantity=" + quantity +
                 ", timeStamp=" + timeStamp +
                 '}';
+    }
+
+    public String getListId() {
+        return listId;
+    }
+
+    public void setListId(String listId) {
+        this.listId = listId;
     }
 }
