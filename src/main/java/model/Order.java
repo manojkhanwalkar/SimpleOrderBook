@@ -10,6 +10,15 @@ public class Order {
     int quantity;
     long timeStamp ;
     OrderType orderType;
+    String clientOrderID;
+
+    public String getClientOrderID() {
+        return clientOrderID;
+    }
+
+    public void setClientOrderID(String clientOrderID) {
+        this.clientOrderID = clientOrderID;
+    }
 
     boolean deleted = false ;
 
@@ -97,12 +106,15 @@ public class Order {
     @Override
     public String toString() {
         return "Order{" +
-                "orderId='" + orderId + '\'' +
+                "listId='" + listId + '\'' +
+                ", orderId='" + orderId + '\'' +
                 ", symbol='" + symbol + '\'' +
                 ", side=" + side +
                 ", price=" + price +
                 ", quantity=" + quantity +
                 ", timeStamp=" + timeStamp +
+                ", orderType=" + orderType +
+                ", clientOrderID='" + clientOrderID + '\'' +
                 '}';
     }
 

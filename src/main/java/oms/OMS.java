@@ -10,6 +10,7 @@ import model.Transaction;
 import txn.Context;
 
 import javax.transaction.UserTransaction;
+import java.util.ArrayList;
 import java.util.List;
 
 import static fix.TagConstants.MsgType;
@@ -17,7 +18,7 @@ import static fix.TagConstants.NEWORDERSINGLE;
 
 public class OMS {
 
-    Cache<String, Order> orderCache = new Cache<>();
+    Cache<String, Order> orderCache; // = new Cache<>();
     Cache<String, Execution> executionCache = new Cache<>();
     Cache<String, Detail> detailCache = new Cache<>();
     Cache<String, Transaction> transactionCache = new Cache<>();
@@ -74,6 +75,12 @@ public class OMS {
 
     private OMS()
     {
+        List<String> keys = new ArrayList<>();
+        keys.add("ClientOrderID");
+        keys.add("Symbol");
+
+        orderCache = new Cache<>(keys);
+
 
     }
 
