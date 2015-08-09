@@ -5,7 +5,9 @@ package fix;
  */
 public class TagConstants {
 
-    static final String NEWORDERSINGLE="D";
-    static final String EXECUTIONREPORT="8";
+    public static final String MsgType = "35";
+
+    public static final String NEWORDERSINGLE="D";
+    public static final String EXECUTIONREPORT="8";
 
 }
