@@ -9,9 +9,6 @@ import model.Transaction;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by mkhanwalkar on 8/8/15.
- */
 public class OrderProcessor {
 
     FixMessage message ;
@@ -43,12 +40,13 @@ public class OrderProcessor {
         Tuple<String,String> t = new Tuple<>("ClientOrderID" , order.getClientOrderID());
         Tuple<String,String> t1 = new Tuple<>("Symbol" , order.getSymbol());
         List<Tuple<String,String>> tuples = new ArrayList<>();
+        List<Tuple<String,String>> tuples1 = new ArrayList<>();
         tuples.add(t);
-        tuples.add(t1);
+        tuples1.add(t1);
 
 
 
-        oms.getOrderCache().put(orderId, order,tuples);
+        oms.getOrderCache().put(orderId, order,tuples,tuples1);
 
         oms.getDetailCache().put(orderId, detail);
 

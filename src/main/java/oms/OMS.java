@@ -77,9 +77,11 @@ public class OMS {
     {
         List<String> keys = new ArrayList<>();
         keys.add("ClientOrderID");
-        keys.add("Symbol");
 
-        orderCache = new Cache<>(keys);
+        List<String> nukeys = new ArrayList<>();
+        nukeys.add("Symbol");
+
+        orderCache = new Cache<>(keys,nukeys);
 
 
     }
