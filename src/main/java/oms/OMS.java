@@ -99,20 +99,23 @@ public class OMS {
 
     public void process(FixMessage message) throws Exception
     {
-        String tag = message.get(MsgType);
+        String tag = message == null ? null : message.get(MsgType);
+        if (!NEWORDERSINGLE.equals(tag))
+            throw new IllegalArgumentException("Unsupported message type: " + tag);
         UserTransaction txn = Context.getUserTransaction();
         txn.begin();
-        switch(tag)
+        try
         {
-            case NEWORDERSINGLE : {
-
-                OrderProcessor orderProcessor = new OrderProcessor(message, this);
-                orderProcessor.process();
-                break;
-            }
+            OrderProcessor orderProcessor = new OrderProcessor(message, this);
+            orderProcessor.process();
+            txn.commit();
         }
-
-        txn.commit();
+        catch (Exception e)
+        {
+            // never leave a half-applied transaction open on failure
+            try { txn.rollback(); } catch (Exception rollbackFailure) { e.addSuppressed(rollbackFailure); }
+            throw e;
+        }
         System.out.println(orderCache);
 
     }
