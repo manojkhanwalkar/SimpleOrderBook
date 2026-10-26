@@ -23,10 +23,14 @@ static class Holder
     {
 
 
-        OrderBook book = new OrderBook();
-
-        books.put(symbol, book);
-        return book ;
+        if (symbol == null || symbol.isEmpty())
+            throw new IllegalArgumentException("Symbol is required");
+        // return the existing book rather than silently replacing it (and dropping its orders)
+        return books.computeIfAbsent(symbol, s -> {
+            OrderBook book = new OrderBook();
+            book.setSymbol(s);
+            return book;
+        });
 
     }
 
