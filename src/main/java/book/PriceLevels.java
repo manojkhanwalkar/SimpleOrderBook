@@ -65,7 +65,7 @@ public class PriceLevels {
                     break;
                 }
             }
-            if (list==null)
+            if (level==null) // price is above every existing level: append at the end
             {
                 level = new PriceLevel();
                 level.setPrice(price);

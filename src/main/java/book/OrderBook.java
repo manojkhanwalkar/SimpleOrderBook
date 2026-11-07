@@ -4,6 +4,7 @@ import model.Manning;
 import model.Order;
 import book.PriceLevel;
 import book.PriceLevels;
+import model.OrderType;
 import model.Side;
 
 import java.util.List;
@@ -28,9 +29,13 @@ public class OrderBook {
         this.symbol = symbol;
     }
 
-    public void addOrder(Order order)
+    public synchronized void addOrder(Order order)
     {
-        orders.put(order.getOrderId(), order);
+        validateOrder(order);
+        // reject duplicate ids: overwriting the map entry would orphan the resting order,
+        // which could then never be found again to be cancelled
+        if (orders.putIfAbsent(order.getOrderId(), order) != null)
+            throw new IllegalArgumentException("Duplicate order id: " + order.getOrderId());
         switch (order.getSide())
         {
             case Buy :
@@ -42,6 +47,35 @@ public class OrderBook {
 
         }
 
+    }
+
+    private static void validateOrder(Order order)
+    {
+        if (order == null)
+            throw new IllegalArgumentException("Order must not be null");
+        if (order.getOrderId() == null || order.getOrderId().isEmpty())
+            throw new IllegalArgumentException("Order id is required");
+        if (order.getSide() == null)
+            throw new IllegalArgumentException("Order side is required");
+        if (order.getOrderType() == null)
+            throw new IllegalArgumentException("Order type is required");
+        if (order.getQuantity() <= 0)
+            throw new IllegalArgumentException("Order quantity must be positive");
+        if (order.getOrderType() == OrderType.Limit
+                && !(order.getPrice() > 0 && !Double.isInfinite(order.getPrice())))
+            throw new IllegalArgumentException("Limit order price must be a positive finite number");
+    }
+
+    private static void validateManning(Manning manning)
+    {
+        if (manning == null)
+            throw new IllegalArgumentException("Manning must not be null");
+        if (manning.getSide() == null)
+            throw new IllegalArgumentException("Manning side is required");
+        if (manning.getQuantity() <= 0)
+            throw new IllegalArgumentException("Manning quantity must be positive");
+        if (Double.isNaN(manning.getPrice()))
+            throw new IllegalArgumentException("Manning price must be a number");
     }
 
     /*
@@ -56,166 +90,96 @@ public class OrderBook {
 
      */
 
-    private void applyManningToSell(Manning manning)
+    public synchronized void processManning(Manning manning)
     {
-        int remainingQty = manning.getQuantity();
-        Queue<Order> orders = sell.mktLevel.orders;
-        processMktOrders(manning,orders);
+        validateManning(manning);
+        int remainingQty;
+        if (manning.getSide()== Side.Buy)
+        {
+            remainingQty = applyManningToSell(manning);
+        }
+        else
+        {
+            remainingQty = applyManningToBuy(manning);
+
+        }
+        manning.setRemainingQty(remainingQty);
+
+    }
+
+    private int applyManningToSell(Manning manning)
+    {
+        // the market level consumes part of the manning quantity; only the rest is
+        // available for the limit levels
+        int remainingQty = fill(sell.mktLevel.orders, manning.getQuantity());
 
         List<PriceLevel> ordersList = sell.list;
-        for (int i=0;i<ordersList.size();i++)
+        for (int i=0;i<ordersList.size() && remainingQty>0;i++)
         {
             PriceLevel priceLevel = ordersList.get(i);
             if (priceLevel.getPrice()>manning.getPrice())
-                return ;
-             orders = priceLevel.orders;
-            while (!orders.isEmpty())
-            {
-                Order order = orders.peek();
-                if (order.isDeleted())
-                {
-                    orders.remove();
-                    continue;
-                }
-                if (order.getQuantity()<=remainingQty)
-                {
-                    orders.remove();
-                    remainingQty-=order.getQuantity();
-                }
-                else
-                {
-
-                    order.setQuantity(order.getQuantity()-remainingQty);
-                    remainingQty = 0;
-                    return ;
-                }
-            }
-            // queue is empty if control comes here , so delete it
-            ordersList.remove(i--);
-
-
+                break ;
+            remainingQty = fill(priceLevel.orders, remainingQty);
+            if (priceLevel.orders.isEmpty())
+                ordersList.remove(i--);
         }
-
-
+        return remainingQty;
     }
 
-
-    public synchronized void processManning(Manning manning)
+    private int applyManningToBuy(Manning manning)
     {
-        if (manning.getSide()== Side.Buy)
-        {
-            applyManningToSell(manning);
-        }
-        else
-        {
-            applyManningToBuy(manning);
-
-        }
-
-    }
-
-    private void processMktOrders(Manning manning , Queue<Order> orders)
-    {
-        int remainingQty = manning.getQuantity();
-        { // process mkt queue
-            while (!orders.isEmpty()) {
-                Order order = orders.peek();
-                if (order.isDeleted()) {
-                    orders.remove();
-                    continue;
-                }
-                if (order.getQuantity() <= remainingQty) {
-                    orders.remove();
-                    remainingQty -= order.getQuantity();
-                } else {
-
-                    order.setQuantity(order.getQuantity() - remainingQty);
-                    remainingQty = 0;
-
-                    return;
-                }
-            }
-        }
-
-    }
-
-   /* private boolean shouldProcess(double price1 , double price2)
-    {
-        if (price1>price2)
-            return true ;
-        else
-            return false ;
-    }*/
-
-    private void applyManningToBuy(Manning manning)
-    {
-        int remainingQty = manning.getQuantity();
-        Queue<Order> orders = buy.mktLevel.orders;
-        processMktOrders(manning,orders);
-
+        int remainingQty = fill(buy.mktLevel.orders, manning.getQuantity());
 
         List<PriceLevel> ordersList = buy.list;
-
-        for (int i=ordersList.size()-1;i>=0;i--)
+        for (int i=ordersList.size()-1;i>=0 && remainingQty>0;i--)
         {
             PriceLevel priceLevel = ordersList.get(i);
             if (priceLevel.getPrice()<manning.getPrice())
-                return ;
-             orders = priceLevel.orders;
-            while (!orders.isEmpty())
-            {
-                Order order = orders.peek();
-                if (order.isDeleted())
-                {
-                    orders.remove();
-                    continue;
-                }
-                if (order.getQuantity()<=remainingQty)
-                {
-                    orders.remove();
-                    remainingQty-=order.getQuantity();
-                }
-                else
-                {
-
-                    order.setQuantity(order.getQuantity()-remainingQty);
-                    remainingQty = 0;
-                    return ;
-                }
-            }
-            // queue is empty if control comes here , so delete it
-            ordersList.remove(i);
-
-            //i++; // adjust i as list size decreases .
-
-
+                break ;
+            remainingQty = fill(priceLevel.orders, remainingQty);
+            if (priceLevel.orders.isEmpty())
+                ordersList.remove(i);
         }
-
-
+        return remainingQty;
     }
 
+    /**
+     * Fills orders from the head of the queue until the quantity is exhausted.
+     * Deleted and fully filled orders are removed from the queue and from the id index
+     * so the book does not grow without bound. Returns the unfilled quantity.
+     */
+    private int fill(Queue<Order> queue, int remainingQty)
+    {
+        while (!queue.isEmpty() && remainingQty>0)
+        {
+            Order order = queue.peek();
+            if (order.isDeleted())
+            {
+                queue.remove();
+                orders.remove(order.getOrderId(), order);
+                continue;
+            }
+            if (order.getQuantity()<=remainingQty)
+            {
+                queue.remove();
+                orders.remove(order.getOrderId(), order);
+                remainingQty-=order.getQuantity();
+            }
+            else
+            {
+                order.setQuantity(order.getQuantity()-remainingQty);
+                remainingQty = 0;
+            }
+        }
+        return remainingQty;
+    }
 
-
-
-
-
-    public void deleteOrder(String  orderId)
+    public synchronized void deleteOrder(String  orderId)
     {
         // lazy delete - will be removed while popping orders for execution .
         Order order = orders.get(orderId);
         if (order!=null)
             order.setDeleted(true);
-
- /*       switch (order.getSide())
-        {
-            case Buy :
-                buy.deleteOrder(order);
-                break ;
-            case Sell :
-                sell.deleteOrder(order);
-                break ;
-
-        }*/
 
     }
 
